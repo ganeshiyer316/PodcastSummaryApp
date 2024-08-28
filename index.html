@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podcast Summarizer</title>
+</head>
+<body>
+    <h1>Podcast Summarizer</h1>
+    <form id="summarize-form" method="POST" action="/summarize">
+        <label for="youtube_url">YouTube URL:</label>
+        <input type="text" id="youtube_url" name="youtube_url" required><br><br>
+        <label for="agenda">Agenda (with timestamps):</label><br>
+        <textarea id="agenda" name="agenda" rows="10" cols="50" required></textarea><br><br>
+        <button type="submit">Generate Summaries</button>
+    </form>
+    <h2>Summaries:</h2>
+    <div id="summaries"></div>
+
+    <script>
+        document.getElementById('summarize-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch('/summarize', {
+                method: 'POST',
+                body: formData
+            });
+            const summaries = await response.json();
+            const summariesDiv = document.getElementById('summaries');
+            summariesDiv.innerHTML = '';
+            if (summaries.error) {
+                summariesDiv.innerHTML = `<p>Error: ${summaries.error}</p>`;
+            } else {
+                for (const [topic, summary] of Object.entries(summaries)) {
+                    summariesDiv.innerHTML += `<h3>${topic}</h3><p>${summary}</p>`;
+                }
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+run = "python main.py"
+entrypoint = "main.py"
+modules = ["python-3.10"]
+
+[nix]
+channel = "stable-22_11"
+
+[deployment]
+run = ["python", "main.py"]
+deploymentTarget = "cloudrun"

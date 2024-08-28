@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "podcast-summary-app"
+version = "0.1.0"
+description = "An app that summarizes YouTube videos"
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "^2.0.1"
+transformers = "^4.11.3"
+torch = "^1.9.0"
+youtube_transcript_api = "^0.5.0"
+charset-normalizer = "^2.0.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
