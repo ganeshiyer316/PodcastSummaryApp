@@ -3,39 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Podcast Summarizer</title>
+    <title>YouTube Video Summarizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Podcast Summarizer</h1>
-    <form id="summarize-form" method="POST" action="/summarize">
-        <label for="youtube_url">YouTube URL:</label>
-        <input type="text" id="youtube_url" name="youtube_url" required><br><br>
-        <label for="agenda">Agenda (with timestamps):</label><br>
-        <textarea id="agenda" name="agenda" rows="10" cols="50" required></textarea><br><br>
-        <button type="submit">Generate Summaries</button>
-    </form>
-    <h2>Summaries:</h2>
-    <div id="summaries"></div>
-
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-4">YouTube Video Summarizer</h1>
+        <div class="mb-4">
+            <input type="text" id="youtubeUrl" placeholder="Enter YouTube URL" class="w-full p-2 border rounded">
+        </div>
+        <button id="summarizeBtn" class="bg-blue-500 text-white px-4 py-2 rounded">Summarize</button>
+        <div id="loading" class="hidden mt-4">Summarizing... This may take a few minutes.</div>
+        <div id="results" class="hidden mt-4">
+            <h2 class="text-2xl font-bold">Summary</h2>
+            <div id="longSummary" class="mt-2 p-4 bg-white rounded shadow"></div>
+            <h2 class="text-2xl font-bold mt-4">TL;DR</h2>
+            <div id="shortSummary" class="mt-2 p-4 bg-white rounded shadow"></div>
+        </div>
+    </div>
     <script>
-        document.getElementById('summarize-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const response = await fetch('/summarize', {
-                method: 'POST',
-                body: formData
-            });
-            const summaries = await response.json();
-            const summariesDiv = document.getElementById('summaries');
-            summariesDiv.innerHTML = '';
-            if (summaries.error) {
-                summariesDiv.innerHTML = `<p>Error: ${summaries.error}</p>`;
-            } else {
-                for (const [topic, summary] of Object.entries(summaries)) {
-                    summariesDiv.innerHTML += `<h3>${topic}</h3><p>${summary}</p>`;
+        document.getElementById('summarizeBtn').addEventListener('click', async () => {
+            const youtubeUrl = document.getElementById('youtubeUrl').value;
+            const loadingDiv = document.getElementById('loading');
+            const resultsDiv = document.getElementById('results');
+            const longSummaryDiv = document.getElementById('longSummary');
+            const shortSummaryDiv = document.getElementById('shortSummary');
+
+            loadingDiv.classList.remove('hidden');
+            resultsDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch('/summarize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ youtube_url: youtubeUrl }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    longSummaryDiv.textContent = data.long_summary;
+                    shortSummaryDiv.textContent = data.short_summary;
+                    resultsDiv.classList.remove('hidden');
+                } else {
+                    throw new Error(data.error || 'An error occurred');
                 }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                loadingDiv.classList.add('hidden');
             }
-        };
+        });
     </script>
 </body>
 </html>

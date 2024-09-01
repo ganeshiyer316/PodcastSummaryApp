@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# Install dependencies
-pip install flask transformers torch requests beautifulsoup4 gunicorn
+# Ensure we're in the project directory
+cd "$(dirname "$0")"
 
-# Start the Flask app using gunicorn
-exec gunicorn --bind 0.0.0.0:8080 main:app
+# Use Replit's Python to install packages
+python3 -m pip install --user -r requirements.txt
+
+# Run the Python script
+python3 main.py

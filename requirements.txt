@@ -1,5 +1,4 @@
-flask
-transformers
 torch
-youtube_transcript_api
-charset-normalizer
+torchaudio
+transformers
+youtube_dl
